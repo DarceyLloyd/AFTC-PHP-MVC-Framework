@@ -1,0 +1,22 @@
+RewriteEngine on
+
+# NC = Non Casesensative
+# QSA = Pass query string from original url
+# L = If match process no more rewrite rules
+
+# For AUTH HEADERS TO GET THROUGH
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+# Rewrite rule for pages
+# RewriteCond %{REQUEST_URI} !^/assets/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Had to comment next line out as it wouldn't pass anything with those files to the router (file fetch wouldn't work)
+#RewriteCond %{REQUEST_URI} !^.*\.(jpg|css|js|gif|png|webp)$ [NC]
+
+#RewriteRule ^en(.*)$ /index.php?lang=en1&path=$1 [NC,L,QSA]
+#RewriteRule ^en/(.*)$ /index.php?lang=en&path=$1 [NC,L,QSA]
+
+# Original
+RewriteRule ^(.*)$ ./index.php?path=$1 [NC,L,QSA]

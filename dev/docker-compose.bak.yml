@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  data_container:
+    container_name: data_container
+    build:
+      context: .
+      dockerfile: ./Dockerfile.data
+    networks:
+      - backend
+
+  php_container:
+    container_name: php_container
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    restart: on-failure:3
+    depends_on:
+      - data_container
+    networks:
+      - backend
+    volumes:
+      - ./server:/var/www
+
+  nginx_container:
+    container_name: nginx_container
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "81:81"
+      - "444:444"
+    restart: on-failure:3
+    depends_on:
+      - data_container
+      - php_container
+    networks:
+      - backend
+      - default
+    volumes:
+      - ./server:/var/www
+
+  apache_container:
+    container_name: apache_container
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: on-failure:3
+    depends_on:
+      - data_container
+      - php_container
+    networks:
+      - backend
+      - default
+    volumes:
+      - ./server:/var/www
+
+volumes:
+  html_data:
+
+networks:
+  backend:

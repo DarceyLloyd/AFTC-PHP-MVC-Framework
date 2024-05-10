@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block head %}
+        <title>{% block title %}My Website{% endblock %}</title>
+        <link rel="stylesheet" href="styles.css">
+        {% block additional_css %}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+{% include './twig-demo/header_default.twig' %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+{% include './twig-demo/footer.twig' %}
+
+
+<!-- Dump the variables -->
+<hr>
+{{ dump(myVariable) }}
+{{ dump(arrayVariable) }}
+<hr>
+
+{% block scripts %}
+    <script src="common.js"></script>
+    {% block additional_js %}{% endblock %}
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  mysql_container:
+    container_name: mysql_container
+    build:
+      context: .
+      dockerfile: Dockerfile.mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      # MYSQL_DATABASE: your_database_name
+      # MYSQL_USER: your_username
+      # MYSQL_PASSWORD: your_password
+    # command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - backend
+
+  apache_container:
+    container_name: apache_container
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: on-failure:3
+    depends_on:
+      - mysql_container
+    volumes:
+      - ./server:/var/www
+    networks:
+      - backend
+
+networks:
+  backend:

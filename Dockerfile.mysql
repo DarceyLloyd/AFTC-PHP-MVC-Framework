@@ -1,0 +1,18 @@
+# Use the official MySQL image as the base
+FROM mysql:latest
+
+# Set the environment variables for MySQL from docker
+ENV MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+ENV MYSQL_DATABASE=$MYSQL_DATABASE
+ENV MYSQL_USER=$MYSQL_USER
+ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
+
+# Create a directory for MySQL data
+RUN mkdir -p /var/lib/mysql
+
+# Expose the default MySQL port
+EXPOSE 3306
+
+# The below stopped working on 02/05/2024 for some reason (supposed to be new way)
+# Configure MySQL to use the mysql_native_password authentication plugin
+# CMD ["mysqld", "--default-authentication-plugin=caching_sha2_password"]

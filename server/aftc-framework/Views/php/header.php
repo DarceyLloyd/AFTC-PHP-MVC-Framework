@@ -1,0 +1,1 @@
+<div id="header">AFTC PHP MVC Framework</div>

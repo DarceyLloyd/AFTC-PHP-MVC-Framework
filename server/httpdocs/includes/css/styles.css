@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    padding: 5px;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-size: 1rem;
+    background: #333333;
+    color: #CCCCCC;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#output {
+    display: flex;
+    /* flex-direction: column; */
+    border: 1px solid #CCCCCC;
+    margin: 5px;
+    padding: 5px;
+    width: 300px;
+    height: 400px;
+}

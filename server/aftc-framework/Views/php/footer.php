@@ -1,0 +1,1 @@
+<footer>AFTC PHP MVC Framework</footer>

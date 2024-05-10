@@ -1,0 +1,59 @@
+FROM php:8.3-apache
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libfreetype6-dev \
+    nano \
+    ncdu \
+    libzip-dev \
+    zip \
+    libssl-dev \
+    libcurl4-openssl-dev \
+    libuv1-dev \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable Apache modules
+RUN docker-php-ext-configure gd \
+    --with-jpeg \
+    --with-webp \
+    --with-xpm \
+    --with-freetype \
+    && docker-php-ext-install -j$(nproc) gd
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mysqli zip
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Enable Apache rewrite module
+RUN a2enmod rewrite
+
+# Configure apache document root (see alt method below, works)
+# Copy over apache2.conf
+# COPY ./apache/etc/apache2/apache2.conf /etc/apache2/apache2.conf
+# COPY ./apache/etc/apache2/sites-available/000-default.conf /etc/apache2/apache2/sites-available.000-default.conf
+# NOTE: ENV Var is not editable inside the container
+
+# Set Apache document root
+ENV APACHE_DOCUMENT_ROOT=/var/www/httpdocs
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Modify php ini for production and development
+RUN sed -i 's/;extension=openssl/extension=openssl/' /usr/local/etc/php/php.ini-production
+RUN sed -i 's/;extension=openssl/extension=openssl/' /usr/local/etc/php/php.ini-development
+
+# Set working directory
+WORKDIR /var/www
+
+# Expose port 80
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
