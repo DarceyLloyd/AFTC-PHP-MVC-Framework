@@ -11,6 +11,8 @@ class Config
 {
     // Dev
     public static bool $dev = true;
+
+    // TODO: Remove
     public static bool $sendAllEmailsToAdmin = false;
     public static string $adminEmail = "darcey@aftc.io";
 
@@ -63,19 +65,19 @@ class Config
     public static string $jwtPrivateKeyPassPhrase = "darcey1234";
     public static int $jwtLifeTime = 3600; //1800; //(60 * 12); // seconds 1800 is 30 minutes
     public static string $jwtAlgo = "RS512";
-    public static string $jwtIss = ""; // DO NOT ALTER DYNAMICALLY SET
-    public static string $jwtAud = ""; // DO NOT ALTER DYNAMICALLY SET
+    public static string $jwtIss = ""; // Dynamically set DO NOT MODIFY
+    public static string $jwtAud = ""; // Dynamically set DO NOT MODIFY
     public static string $jwtCookieName = "aftc-token";
     // public static int $nbf = 0; // set during JWT operations
     // public static int $exp = 0; // set during JWT operations
 
     // GEOIP
-    // public static bool $enable_geo_check = false;
-    // public static bool $enable_geo_check_in_dev = false;
-    // public static string $geo_ip_cookie_name = "geoip_passed";
-    // public static int $geo_ip_cookie_life = (24 * 3600); // 3600 = 1 hour
-    // public static array $allowed_countries = ["GB"];
-    // public static string $geo_ip_pass_value = "xxxxxxxxxxxxxxxxx}"; // 64 char
+    public static bool $enable_geo_check = false;
+    public static bool $enable_geo_check_in_dev = false;
+    public static string $geo_ip_cookie_name = "geoip_passed";
+    public static int $geo_ip_cookie_life = (24 * 3600); // 3600 = 1 hour
+    public static array $allowed_countries = ["GB"];
+    public static string $geo_ip_pass_value = "xxxxxxxxxxxxxxxxx}"; // 64 char
 
     // Passwords
     // https://www.php.net/manual/en/function.password-hash.php
@@ -104,20 +106,23 @@ class Config
     public static string $databaseUsername = ""; // SET IN METHOD "init()" SWITCH STATEMENT
     public static string $databasePassword = ""; // SET IN METHOD "init()" SWITCH STATEMENT
 
-    // Dynamically set
-    public static string $domain = ""; // Dynamically set
+    public static bool $isApi = false; // Dynamically set DO NOT MODIFY
+
+    public static string $domain = ""; // Dynamically set DO NOT MODIFY
 
     // Fastrouter
-    public static string $routerCacheFolder = ""; // Dynamically set
+    public static bool $routerCacheEnabled = true;
+    public static string $routerCacheFolder = ""; // Dynamically set DO NOT MODIFY
+
+    // TODO Router data (DO NOT MODIFY THIS VARIABLE, IT IS SET DYNAMICALLY)
+    // public static mixed $routData; // Not in use (yet, but may be removed)
 
     // Twig configuration
     public static bool $twigEnableCache = false;
     public static bool $twigDebug = true;
-    public static string $viewFolder = ""; // Dynamically set
-    public static string $twigCacheFolder = ""; // Dynamically set
+    public static string $viewFolder = ""; // Dynamically set DO NOT MODIFY
+    public static string $twigCacheFolder = ""; // Dynamically set DO NOT MODIFY
 
-    // Router data (DO NOT MODIFY THIS VARIABLE, IT IS SET DYNAMICALLY)
-    public static mixed $routData;
 
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

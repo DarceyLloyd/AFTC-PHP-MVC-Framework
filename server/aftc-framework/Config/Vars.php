@@ -20,6 +20,8 @@ class Vars
         "user"
     ];
 
+    public static int $recordsPerPage = 40;
+
     public static function init():void
     {
         // self::$data = json_decode(file_get_contents(APP_ROOT . "/data/data.json"), true);

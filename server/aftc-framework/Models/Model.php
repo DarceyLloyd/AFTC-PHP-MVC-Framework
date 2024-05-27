@@ -3,7 +3,7 @@
 namespace AFTC\Models;
 
 use AFTC\Config\Config;
-use AFTC\Enums\eQueryMode;
+use AFTC\Enums\eQueryType;
 use AFTC\Libs\DatabaseLib;
 use AFTC\Libs\PasswordLib;
 use AFTC\Utils\AFTCUtils;
@@ -61,7 +61,7 @@ class Model
      */
     public function fetch(string $sql, ?array $inserts = null): ModelQueryVo
     {
-        return $this->queryFetcher(eQueryMode::FETCH, $sql, $inserts);
+        return $this->queryFetcher(eQueryType::FETCH, $sql, $inserts);
     }
 
     /**
@@ -73,7 +73,7 @@ class Model
      */
     public function fetchAll(string $sql, ?array $inserts = null): ModelQueryVo
     {
-        return $this->queryFetcher(eQueryMode::FETCHALL, $sql, $inserts);
+        return $this->queryFetcher(eQueryType::FETCHALL, $sql, $inserts);
     }
 
     /**
@@ -85,7 +85,7 @@ class Model
      */
     public function executeQuery(string $sql, ?array $inserts = null): ModelQueryVo
     {
-        return $this->queryFetcher(eQueryMode::EXECUTE, $sql, $inserts);
+        return $this->queryFetcher(eQueryType::EXECUTE, $sql, $inserts);
     }
 
     /**
@@ -172,12 +172,12 @@ class Model
     /**
      * Perform a query based on the query mode.
      *
-     * @param eQueryMode $enumQueryMode The query mode.
+     * @param eQueryType $enumQueryMode The query mode.
      * @param string $sql The SQL query.
      * @param array|null $inserts The query inserts.
      * @return ModelQueryVo The query result.
      */
-    private function queryFetcher(eQueryMode $enumQueryMode, string $sql, ?array $inserts = null): ModelQueryVo
+    private function queryFetcher(eQueryType $enumQueryMode, string $sql, ?array $inserts = null): ModelQueryVo
     {
         // Check number of inserts matches the number of : in the sql
         if ($inserts !== null) {

@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 
 /**
  * Global constants for path use: ROOT, APP_ROOT, VIEWS_PATH
@@ -87,6 +86,21 @@ if (Config::$enableSessions === true) {
         ['expires' => time() + Config::$sessionLifetime, 'samesite' => 'Strict']
     );
 }
+
+
+use AFTC\Libs\GeoIpCheckLib;
+if (Config::$enable_geo_check){
+    $geoIpCheckLib = new GeoIpCheckLib();
+    $access_granted = $geoIpCheckLib->checkGeoIp();
+    AFTC\Utils\AFTCUtils::writeToLog($access_granted);
+    if ($access_granted === false){
+        header("location: /blocked.html");
+        exit();
+    }
+}
+
+
+
 
 // Lets go!
 $routerLib = new \AFTC\Libs\RouterLib();

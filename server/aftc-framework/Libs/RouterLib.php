@@ -6,13 +6,13 @@ use AFTC\Config\Config;
 use AFTC\Config\Routes;
 use AFTC\Utils\AFTCUtils;
 use AFTC\VOs\RouteVo;
-use AFTC\Enums\eRouteType;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 
 class RouterLib
 {
     public string $uri = "";
+    public bool $isApi = false;
     private int $routeIndex = 0;
     private array $routes = [];
     private ?RouteVo $routeModel = null;
@@ -26,15 +26,18 @@ class RouterLib
         }
         $this->uri = rawurldecode($this->uri);
 
+        // isAPI
+        Config::$isApi = str_starts_with($this->uri, '/api/');
+
+        // Setup Router
         new Routes($this);
         $this->setupRouter();
     }
 
-    public function add(eRouteType $routeType, string $requestMethod, string $url, string $namespace, string $class, ?string $method = null): void
+    public function add(string $requestMethod, string $url, string $namespace, string $class, ?string $method = null): void
     {
         $model = new RouteVo();
         $model->index = $this->routeIndex;
-        $model->routeType = $routeType;
         $model->requestMethod = $requestMethod;
         $model->url = $url;
         $model->namespace = $namespace;
@@ -78,14 +81,16 @@ class RouterLib
 
     private function setupRouter(): void
     {
-        $dispatcher = \FastRoute\simpleDispatcher(function (RouteCollector $r) {
+        $dispatcher = \FastRoute\cachedDispatcher(function (RouteCollector $r) {
             foreach ($this->routes as $vo) {
                 $r->addRoute($vo->requestMethod, $vo->url, $vo->index);
             }
-        });
+        }, [
+            'cacheFile' => Config::$routerCacheFolder . '/route.cache', /* required */
+            'cacheDisabled' => Config::$routerCacheEnabled,     /* optional, enabled by default */
+        ]);
 
         $httpMethod = $_SERVER['REQUEST_METHOD'];
-
         $routeInfo = $dispatcher->dispatch($httpMethod, $this->uri);
 
         switch ($routeInfo[0]) {
@@ -105,56 +110,46 @@ class RouterLib
 
             case Dispatcher::FOUND:
                 $routeIndex = $routeInfo[1];
-
                 $this->routeModel = $this->getRoute($routeIndex);
                 $class = $this->routeModel->namespace . "\\" . $this->routeModel->class;
 
-                $isApi = $this->routeModel->routeType === eRouteType::API;
-
                 if (!class_exists($class)) {
-                    http_response_code(500);
-                    $msg = [
-                        "status" => 500,
-                        "message" => "Routing Error: Namespace or Class not found [$class]"
-                    ];
-                    AFTCUtils::writeToLog($msg["message"]);
-
-                    if ($isApi) {
-                        header('Content-type:application/json;charset=utf-8');
-                        echo json_encode($msg);
-                    } else {
-                        AFTCUtils::redirect(Config::$errorUrl);
-                    }
-                    exit();
+                    $this->handleRoutingError("Namespace or Class not found [$class]");
                 }
 
                 $controller = new $class();
 
                 if (!method_exists($controller, $this->routeModel->method)) {
-                    http_response_code(500);
-                    $msg = [
-                        "status" => 500,
-                        "message" => "Routing Error: Method not found [{$this->routeModel->method}]"
-                    ];
-                    AFTCUtils::writeToLog($msg["message"]);
-
-                    if ($isApi) {
-                        header('Content-type:application/json;charset=utf-8');
-                        echo json_encode($msg);
-                    } else {
-                        AFTCUtils::redirect(Config::$errorUrl);
-                    }
-                    exit();
+                    $this->handleRoutingError("Method not found [{$this->routeModel->method}]");
                 }
 
                 $method = $this->routeModel->method;
+                $params = $routeInfo[2] ?? null;
 
                 if ($method !== null) {
-                    $controller->$method($routeInfo[2] ?? null);
+                    $controller->$method($params);
                 } else {
-                    $controller = new $class($routeInfo[2] ?? null);
+                    $controller = new $class($params);
                 }
                 break;
         }
+    }
+
+    private function handleRoutingError(string $message): void
+    {
+        http_response_code(500);
+        $msg = [
+            "status" => 500,
+            "message" => "Routing Error: $message"
+        ];
+        AFTCUtils::writeToLog($msg["message"]);
+
+        if (Config::$isApi) {
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode($msg);
+        } else {
+            AFTCUtils::redirect(Config::$errorUrl);
+        }
+        exit();
     }
 }

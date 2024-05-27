@@ -2,7 +2,7 @@
 
 namespace AFTC\Enums;
 
-enum eQueryMode: string
+enum eQueryType: string
 {
     case FETCH = "fetch";
     case FETCHALL = "fetchall";
