@@ -4,6 +4,7 @@ namespace AFTC\Libs;
 
 use AFTC\Config\Config;
 use AFTC\Config\Routes;
+use AFTC\Controllers\Api\UtilsAFTC;
 use AFTC\Utils\AFTCUtils;
 use AFTC\VOs\RouteVo;
 use FastRoute\Dispatcher;
@@ -76,26 +77,30 @@ class RouterLib
     {
         http_response_code(404);
         AFTCUtils::redirect(Config::$pageNotFoundUrl);
-        exit();
+        // exit();
     }
 
     private function setupRouter(): void
     {
+        $FRCacheData = [
+            'cacheFile' => Config::$routerCacheFolder . '/route.cache',
+            'cacheDisabled' => !Config::$routerCacheEnabled,
+        ];
+
+        // AFTCUtils::dumpJson($FRCacheData);
+        // AFTCUtils::writeToLog($FRCacheData);
+
         $dispatcher = \FastRoute\cachedDispatcher(function (RouteCollector $r) {
             foreach ($this->routes as $vo) {
                 $r->addRoute($vo->requestMethod, $vo->url, $vo->index);
             }
-        }, [
-            'cacheFile' => Config::$routerCacheFolder . '/route.cache', /* required */
-            'cacheDisabled' => Config::$routerCacheEnabled,     /* optional, enabled by default */
-        ]);
+        }, $FRCacheData);
 
         $httpMethod = $_SERVER['REQUEST_METHOD'];
         $routeInfo = $dispatcher->dispatch($httpMethod, $this->uri);
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
-                http_response_code(404);
                 $this->respondWith404();
                 break;
 
@@ -119,12 +124,12 @@ class RouterLib
 
                 $controller = new $class();
 
-                if (!method_exists($controller, $this->routeModel->method)) {
+                if ($this->routeModel->method !== null && !method_exists($controller, $this->routeModel->method)) {
                     $this->handleRoutingError("Method not found [{$this->routeModel->method}]");
                 }
 
                 $method = $this->routeModel->method;
-                $params = $routeInfo[2] ?? null;
+                $params = $routeInfo[2] ?? [];
 
                 if ($method !== null) {
                     $controller->$method($params);

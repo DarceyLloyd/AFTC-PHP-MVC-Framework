@@ -28,8 +28,8 @@ class SendSmtpMailLib
     public function send(string $to, string $subject, string $message): bool
     {
         // Handle config overrides
-        if (Config::$sendAllEmailsToAdmin) {
-            $to = Config::$adminEmail;
+        if (Config::$sendAllEmailsToDev) {
+            $to = Config::$emailDev;
         }
 
         $mail = new PHPMailer(true);

@@ -16,7 +16,6 @@ class Vars
     public static array $userTypes = [
         "system admin", // Application may display debug code
         "admin",
-        "product manager",
         "user"
     ];
 

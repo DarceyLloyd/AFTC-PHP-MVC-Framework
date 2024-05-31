@@ -13,8 +13,8 @@ class Config
     public static bool $dev = true;
 
     // TODO: Remove
-    public static bool $sendAllEmailsToAdmin = false;
-    public static string $adminEmail = "darcey@aftc.io";
+    public static bool $sendAllEmailsToDev = false;
+    public static string $emailDev = "darcey@aftc.io";
 
     // Redirects
     public static string $accessDeniedUrl = "/access-denied.html";
@@ -118,7 +118,7 @@ class Config
     // public static mixed $routData; // Not in use (yet, but may be removed)
 
     // Twig configuration
-    public static bool $twigEnableCache = false;
+    public static bool $twigEnableCache = true;
     public static bool $twigDebug = true;
     public static string $viewFolder = ""; // Dynamically set DO NOT MODIFY
     public static string $twigCacheFolder = ""; // Dynamically set DO NOT MODIFY
