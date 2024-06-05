@@ -28,10 +28,15 @@ class ApiStatus extends AFTCApi
 
     public function get() {
 
+        // header('Content-type:application/json;charset=utf-8');
+        // echo json_encode([1,2,3]);
+        // die();
+
         // Setup responseVo
         $this->apiResponseVo->status = 200;
         $this->apiResponseVo->data = [
-            "message" => "Hello World 1"
+            "message 1" => "Hello World 1",
+            "message 2" => "Hello World 2"
         ];
 
         // Set http status code from ApiResponseVo

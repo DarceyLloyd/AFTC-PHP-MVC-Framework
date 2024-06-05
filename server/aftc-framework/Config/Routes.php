@@ -17,46 +17,27 @@ class Routes
         // TODO: Re-code cache capabilities to router due to updated version
         // Demo Templates
 
-        // Done
+        // API
         $router->add("GET", "/api/status", "AFTC\Controllers\Api", "ApiStatus","get");
 
-        // TODO
-        $router->add("GET", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Post");
-        $router->add("PUT", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Put");
-        $router->add("PATCH", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Patch");
-        $router->add("DELETE", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Delete");
 
-
-        // 75% Done
+        // VIEWS
         $router->add("GET", "/", "AFTC\Controllers\Pages", "TwigView","get");
-
-        // TODO
-        $router->add("POST", "/", "AFTC\Controllers\Pages", "TwigView","post");
-
-        // Done
-        $router->add("GET", "/php", "AFTC\Controllers\Pages", "PhpView","get");
-
-        // Done
-        $router->add("POST", "/php", "AFTC\Controllers\Pages", "PhpView","post");
+        // $router->add("GET", "/php", "AFTC\Controllers\Pages", "PhpView","get");
+        // $router->add("POST", "/php", "AFTC\Controllers\Pages", "PhpView","post");
 
 
-        if (Config::$dev === true) {
-            // $router->add("GET", "/api/status", "AFTC\Controllers\Api", "StatusAFTC","test1");
-            // $router->add("GET", "/api/dev/jwt-get-token", "AFTC\Controllers\Api\Dev", "DevJwt","encodeToken");
-            // $router->add("GET", "/api/dev/jwt-validate-token", "AFTC\Controllers\Api\Dev", "DevJwt","validateJwtToken");
-            // $router->add("GET", "/api/dev/jwt-show-payload", "AFTC\Controllers\Api\Dev", "DevJwt","showPayload");
 
-            // $router->add("GET", "/api/dev/seed-users", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedUsers");
-            // $router->add("GET", "/api/dev/seed-schools", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedSchools");
-            // $router->add("GET", "/api/dev/seed-gps", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedGps");
-            // $router->add("GET", "/api/dev/seed-guardians", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedGuardians");
-            // $router->add("GET", "/api/dev/seed-la", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedLocalAuthorities");
+        // EG
+        // $router->add("GET", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Post");
+        // $router->add("PUT", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Put");
+        // $router->add("PATCH", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Patch");
+        // $router->add("DELETE", "/api/status2", "AFTC\Controllers\Api", "ApiParamTest","Delete");
+        // $router->add("GET", "/", "AFTC\Controllers\Pages", "TwigView","get");
+        // $router->add("POST", "/", "AFTC\Controllers\Pages", "TwigView","post");
+        // $router->add("GET", "/php", "AFTC\Controllers\Pages", "PhpView","get");
+        // $router->add("POST", "/php", "AFTC\Controllers\Pages", "PhpView","post");
 
-            // $router->add("GET", "/api/dev/seed-cases", "AFTC\Controllers\Api\Dev", "SeedAFTC", "seedCases");
-            // $router->add("GET", "/api/dev/generate-case-folders", "AFTC\Controllers\Api\Dev", "SeedAFTC", "generateCaseFolders");
-            // $router->add("GET", "/api/dev/get-case-files/{case_id:\d+}", "AFTC\Controllers\Api\Dev", "DevAFTC", "getCaseFiles");
-            // $router->add("GET", "/api/cases/file/download/{id:\d+}/{file}/{token}", "AFTC\Controllers\Api", "FilesController", "downloadCaseFile");
-        }
 
         // Auth
         // $router->add("POST", "/api/auth/login", "AFTC\Controllers\Api", "AuthAFTC", "login");
