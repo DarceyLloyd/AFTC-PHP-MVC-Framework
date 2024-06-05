@@ -1,12 +1,11 @@
 <?php
 
-namespace AFTC\Controllers\Pages;
+namespace AFTC\Controllers\Views;
 
-use AFTC\Config\Vars;
-use AFTC\Controllers\AFTCTwigView;
+use AFTC\Controllers\TwigController;
 use AFTC\Utils\GetRouteData;
 
-class TwigView extends AFTCTwigView
+class TwigViewTest extends TwigController
 {
 
     public function __construct()

@@ -16,7 +16,7 @@ use AFTC\Utils\AFTCUtils;
 use AFTC\VOs\ApiResponseVo;
 use Exception;
 
-class AFTCApi
+class APIController
 {
     public SessionLib $sessionLib;
     public CookieLib $cookieLib;

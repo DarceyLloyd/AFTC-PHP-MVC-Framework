@@ -22,9 +22,9 @@ class Routes
 
 
         // VIEWS
-        $router->add("GET", "/", "AFTC\Controllers\Pages", "TwigView","get");
-        // $router->add("GET", "/php", "AFTC\Controllers\Pages", "PhpView","get");
-        // $router->add("POST", "/php", "AFTC\Controllers\Pages", "PhpView","post");
+        $router->add("GET", "/twig", "AFTC\Controllers\Views", "TwigViewTest","get");
+        $router->add("GET", "/php", "AFTC\Controllers\Views", "PHPViewTest","get");
+        $router->add("POST", "/php", "AFTC\Controllers\Views", "PHPViewTest","post");
 
 
 

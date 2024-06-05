@@ -1,10 +1,10 @@
 <?php
 
-namespace AFTC\Controllers\Pages;
+namespace AFTC\Controllers\Views;
 
-use AFTC\Controllers\AFTCPhpView;
+use AFTC\Controllers\PHPViewController;
 
-class PhpView extends AFTCPhpView
+class PHPViewTest extends PHPViewController
 {
 
     public function __construct()

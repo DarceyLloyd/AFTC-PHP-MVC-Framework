@@ -12,8 +12,11 @@ use AFTC\Libs\SecurityLib;
 use AFTC\Libs\SendSmtpMailLib;
 use AFTC\Libs\SessionLib;
 use AFTC\VOs\ApiResponseVo;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
 
-class AFTCPhpView
+class TwigController
 {
     protected SessionLib $sessionLib;
     protected PasswordLib $passwordLib;
@@ -21,6 +24,7 @@ class AFTCPhpView
     protected SecurityController $securityController;
     protected DatabaseLib $db;
     protected SendSmtpMailLib $mail;
+    protected Environment $twig;
     protected CookieLib $cookieLib;
     protected SecurityLib $securityLib;
     protected ApiResponseLib $apiResponseLib;
@@ -36,6 +40,22 @@ class AFTCPhpView
         $this->mail = new SendSmtpMailLib();
         $this->db = DatabaseLib::getInstance();
 
+
+
+        // Twig
+        $loader = new FilesystemLoader(Config::$viewFolder);
+
+        if (Config::$twigEnableCache){
+            $this->twig = new Environment($loader, [
+                'cache' => Config::$twigCacheFolder,
+            ]);
+        } else {
+            $this->twig = new Environment($loader);
+        }
+
+        if (Config::$twigDebug){
+            $this->twig->addExtension(new DebugExtension());
+        }
 
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
