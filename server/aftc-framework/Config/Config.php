@@ -12,17 +12,17 @@ class Config
     // Dev
     public static bool $dev = true;
 
-    // TODO: Remove
     public static bool $sendAllEmailsToDev = false;
     public static string $emailDev = "darcey@aftc.io";
 
     // Redirects
     public static string $accessDeniedUrl = "/access-denied.html";
     public static string $pageNotFoundUrl = "/404.html";
-    public static string $errorUrl = "/500.html";
+    public static string $pageMethodNotAllowed = "/405.html";
+    public static string $pageError = "/error.html";
 
     // Errors and Logging
-    public static bool $showErrors = false;
+    public static bool $showErrors = true;
 
     // TimeZone
     public static string $timeZone = "Europe/London"; // http://php.net/manual/en/timezones.php

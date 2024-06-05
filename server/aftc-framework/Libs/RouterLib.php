@@ -9,6 +9,7 @@ use AFTC\Utils\AFTCUtils;
 use AFTC\VOs\RouteVo;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use JetBrains\PhpStorm\NoReturn;
 
 class RouterLib
 {
@@ -20,33 +21,32 @@ class RouterLib
 
     public function __construct()
     {
-        // Get URI
-        $this->uri = $_SERVER['REQUEST_URI'];
-        if (($pos = strpos($this->uri, '?')) !== false) {
-            $this->uri = substr($this->uri, 0, $pos);
-        }
-        $this->uri = rawurldecode($this->uri);
-
-        // isAPI
+        $this->uri = $this->getUri();
         Config::$isApi = str_starts_with($this->uri, '/api/');
-
-        // Setup Router
         new Routes($this);
         $this->setupRouter();
+    }
+
+    private function getUri(): string
+    {
+        $uri = $_SERVER['REQUEST_URI'];
+        if (($pos = strpos($uri, '?')) !== false) {
+            $uri = substr($uri, 0, $pos);
+        }
+        return rawurldecode($uri);
     }
 
     public function add(string $requestMethod, string $url, string $namespace, string $class, ?string $method = null): void
     {
         $model = new RouteVo();
-        $model->index = $this->routeIndex;
+        $model->index = $this->routeIndex++;
         $model->requestMethod = $requestMethod;
         $model->url = $url;
         $model->namespace = $namespace;
         $model->class = $class;
         $model->method = $method;
 
-        $this->routeIndex++;
-        array_push($this->routes, $model);
+        $this->routes[] = $model;
     }
 
     public function getRoute(int $index): ?RouteVo
@@ -75,9 +75,11 @@ class RouterLib
 
     private function respondWith404(): void
     {
-        http_response_code(404);
-        AFTCUtils::redirect(Config::$pageNotFoundUrl);
-        // exit();
+        $jsonResponse = [
+            "status" => 404,
+            "message" => "Not found"
+        ];
+        $this->handleErrorResponse(404, $jsonResponse, Config::$pageNotFoundUrl, $jsonResponse["message"]);
     }
 
     private function setupRouter(): void
@@ -86,9 +88,6 @@ class RouterLib
             'cacheFile' => Config::$routerCacheFolder . '/route.cache',
             'cacheDisabled' => !Config::$routerCacheEnabled,
         ];
-
-        // AFTCUtils::dumpJson($FRCacheData);
-        // AFTCUtils::writeToLog($FRCacheData);
 
         $dispatcher = \FastRoute\cachedDispatcher(function (RouteCollector $r) {
             foreach ($this->routes as $vo) {
@@ -105,55 +104,70 @@ class RouterLib
                 break;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
-                http_response_code(405);
-                header('Content-type:application/json;charset=utf-8');
-                echo json_encode([
-                    "status" => 405,
-                    "message" => "Method Not Allowed"
-                ]);
+                $this->respondWith405();
                 break;
 
             case Dispatcher::FOUND:
-                $routeIndex = $routeInfo[1];
-                $this->routeModel = $this->getRoute($routeIndex);
-                $class = $this->routeModel->namespace . "\\" . $this->routeModel->class;
-
-                if (!class_exists($class)) {
-                    $this->handleRoutingError("Namespace or Class not found [$class]");
-                }
-
-                $controller = new $class();
-
-                if ($this->routeModel->method !== null && !method_exists($controller, $this->routeModel->method)) {
-                    $this->handleRoutingError("Method not found [{$this->routeModel->method}]");
-                }
-
-                $method = $this->routeModel->method;
-                $params = $routeInfo[2] ?? [];
-
-                if ($method !== null) {
-                    $controller->$method($params);
-                } else {
-                    $controller = new $class($params);
-                }
+                $this->handleFoundRoute($routeInfo);
                 break;
         }
     }
 
-    private function handleRoutingError(string $message): void
+    private function respondWith405(): void
     {
-        http_response_code(500);
-        $msg = [
-            "status" => 500,
-            "message" => "Routing Error: $message"
+        $jsonResponse = [
+            "status" => 405,
+            "message" => "Method not allowed"
         ];
-        AFTCUtils::writeToLog($msg["message"]);
+        $this->handleErrorResponse(405, $jsonResponse, Config::$pageMethodNotAllowed, $jsonResponse["message"]);
+    }
 
-        if (Config::$isApi) {
-            header('Content-type:application/json;charset=utf-8');
-            echo json_encode($msg);
+    private function handleFoundRoute(array $routeInfo): void
+    {
+        $routeIndex = $routeInfo[1];
+        $this->routeModel = $this->getRoute($routeIndex);
+
+        $class = $this->routeModel->namespace . "\\" . $this->routeModel->class;
+
+        if (!class_exists($class)) {
+            $jsonResponse = [
+                "status" => 500,
+                "message" => "Namespace or Class not found [$class]"
+            ];
+            $this->handleErrorResponse(500, $jsonResponse, Config::$pageError, $jsonResponse["message"]);
+        }
+
+        $controller = new $class();
+        $method = $this->routeModel->method;
+        $params = $routeInfo[2] ?? [];
+
+        if ($method !== null) {
+            if (!method_exists($controller, $method)) {
+                $jsonResponse = [
+                    "status" => 500,
+                    "message" => "Method not found [$method]"
+                ];
+                $this->handleErrorResponse(500, $jsonResponse, Config::$pageError, $jsonResponse["message"]);
+            }
+            $controller->$method($params);
         } else {
-            AFTCUtils::redirect(Config::$errorUrl);
+            new $class($params);
+        }
+    }
+
+    #[NoReturn]
+    private function handleErrorResponse(int $httpCode, array $jsonResponse, string $redirectTo = "", string $errorLogMessage = ""): void
+    {
+        http_response_code($httpCode);
+        if (Config::$isApi) {
+            header('Content-type: application/json;charset=utf-8');
+            echo json_encode($jsonResponse);
+        } else {
+            AFTCUtils::redirect($redirectTo);
+        }
+
+        if ($errorLogMessage !== "") {
+            AFTCUtils::writeToLog($errorLogMessage);
         }
         exit();
     }
