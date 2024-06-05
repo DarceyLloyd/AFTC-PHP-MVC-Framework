@@ -1,4 +1,4 @@
-# AFTC PHP MVC Framework v6.0.0
+# AFTC PHP MVC Framework v6.x.x
 ## PHP Min Version Required 8.3.6
 
 ### WARNING
