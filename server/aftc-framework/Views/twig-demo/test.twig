@@ -3,26 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block head %}
-        <title>{% block title %}{{ title }}{% endblock %}</title>
-        <link rel="stylesheet" href="styles.css">
-        {% block additional_css %}{% endblock %}
-    {% endblock %}
+    <title>{{ title }}</title>
 </head>
 <body>
 
-<main>
-    {% block content %}
-        <h1>{{ message }}</h1>
-        <!-- Dump the variables -->
-        <hr>
-        <!-- Output variable information using Twig syntax -->
-        <pre>{{ myVariable }}</pre>
-        <pre>{{ arrayVariable|join(', ') }}</pre>
 
-        <hr>
-    {% endblock %}
-</main>
+<!-- Dump available variables if twig is in debug mode (see config.php) -->
+<hr><pre>
+{{ dump() }}
+</pre>
+<hr>
+
 
 </body>
 </html>
