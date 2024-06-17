@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block head %}
-        <title>{% block title %}My Website{% endblock %}</title>
-        <link rel="stylesheet" href="styles.css">
-        {% block additional_css %}{% endblock %}
-    {% endblock %}
+    <title>{{ title }}</title>
 </head>
 <body>
 {% include './twig-demo/header_default.twig' %}
@@ -19,10 +15,9 @@
 {% include './twig-demo/footer.twig' %}
 
 
-<!-- Dump the variables -->
+<!-- Dump available variables if twig is in debug mode (see config.php) -->
 <hr>
-{{ dump(myVariable) }}
-{{ dump(arrayVariable) }}
+{{ dump() }}
 <hr>
 
 {% block scripts %}
