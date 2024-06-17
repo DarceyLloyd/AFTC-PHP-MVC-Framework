@@ -45,16 +45,20 @@ class TwigController
         // Twig
         $loader = new FilesystemLoader(Config::$viewFolder);
 
-        if (Config::$twigEnableCache){
-            $this->twig = new Environment($loader, [
-                'cache' => Config::$twigCacheFolder,
-            ]);
-        } else {
-            $this->twig = new Environment($loader);
-        }
-
         if (Config::$twigDebug){
+            $this->twig = new Environment($loader, [
+                'debug' => true,
+            ]);
+
             $this->twig->addExtension(new DebugExtension());
+        } else {
+            if (Config::$twigEnableCache){
+                $this->twig = new Environment($loader, [
+                    'cache' => Config::$twigCacheFolder,
+                ]);
+            } else {
+                $this->twig = new Environment($loader);
+            }
         }
 
     }
