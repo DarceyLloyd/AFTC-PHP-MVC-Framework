@@ -26,7 +26,7 @@ class TwigViewTest extends TwigController
 
         // Render the template with the provided data
         // echo($this->twig->render('./twig-demo/base.twig',$data));
-        echo($this->twig->render('./twig-demo/test.twig',$data));
+        $this->render('./twig-demo/test.twig',$data);
     }
     // - - - - - - - - - - - - - - - - - - - - - - - -
 }

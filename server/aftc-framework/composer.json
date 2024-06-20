@@ -1,7 +1,7 @@
 {
   "name": "aftc/aftc-php-mvc-framework",
   "description": "AFTC PHP Framework Application.",
-  "version": "6.0.5",
+  "version": "6.0.6",
   "keywords": ["AFTC FRAMEWORK"],
   "license": "AFTC LTD",
   "type": "project",

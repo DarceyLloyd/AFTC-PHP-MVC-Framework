@@ -19,6 +19,9 @@ class Vars
         "user"
     ];
 
+    // WARNING: DO NOT REMOVE & LEAVE BLANK FOR PROD - Used by TwigController-render
+    public static string $currentUserType = "system admin";
+
     public static int $recordsPerPage = 40;
 
     public static function init():void
